@@ -669,6 +669,9 @@ try {
     });
     document.addEventListener('click', function (e) {
       console.log("click event",e);
+      if (e.target.tagName == "BUTTON" ){
+        return true;
+      }
       if (e.target.tagName != inTag.toUpperCase()){
         current_item_in_list = 0;
         current_sequence_number_in_item = 0;
@@ -693,7 +696,7 @@ try {
           if (char_from == char_to){
             if (current_selected_to != 0 && current_selected_to !== undefined  ){
               const current_node = read_list_of_elements[current_item_in_list][0];
-              current_node.setHTML(read_list_of_elements[current_item_in_list][1]);
+              current_node.innerHTML = read_list_of_elements[current_item_in_list][1];
               current_item_in_list = 0;
               current_sequence_number_in_item = 0;
               current_sequence_number_in_item_from = 0;
@@ -768,12 +771,15 @@ try {
       list_words[current_sequence_number_in_item + deltaNumberOfWords ] = "<span style='color:blue'>" + list_words[current_sequence_number_in_item + deltaNumberOfWords] + "</span>";
     } else {
       for (let item of split_inPartText) {
+        // need preceding, succeeding text?
         let base_string = " " + the_word_to_highlight.toLowerCase().trim().replace(/[^a-z]/g, '') + " ";
-        let compara_string =  " " + item.toLowerCase().trim().replace(/[^a-z]/g, '') + " ";
+        let compara_string =  item.toLowerCase().trim().replace(/[^a-z]/g, '');
         if (base_string.indexOf(compara_string) != -1) {
           list_words[current_sequence_number_in_item + deltaNumberOfWords] = "<span style='opacity:50%'>" + list_words[current_sequence_number_in_item + deltaNumberOfWords] + "</span>";
           deltaNumberOfWords += 1;
           the_word_to_highlight = list_words[current_sequence_number_in_item + deltaNumberOfWords];
+        } else if ((base_string.replaceAll(" ","").length)== 0) {
+          deltaNumberOfWords += 1;
         } else {
           list_words[current_sequence_number_in_item + deltaNumberOfWords] = "<span style='color:red'>" + list_words[current_sequence_number_in_item + deltaNumberOfWords] + "</span>";
         }
@@ -797,7 +803,7 @@ try {
       }
     }
     let replacing_HTML = list_words.join(" ");
-    current_node.setHTML(replacing_HTML);
+    current_node.innerHTML = replacing_HTML;
     text_of_the_progresses = "At:" + current_item_in_list.toString() + " / word:" + current_sequence_number_in_item.toString()
         + ` / ${current_selected_from} to ${current_selected_to} / `
         + `${current_sequence_number_in_item_from} to ${current_sequence_number_in_item_to}`;
