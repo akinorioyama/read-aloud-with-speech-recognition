@@ -49,7 +49,7 @@
         <button id="update_content_via_textbox_content" onclick="update_content_via_textbox_content()">Start Practices</button>
         <button id="skip_and_forward" onclick="skip_and_forward()">Skip and forward</button>
     </div>
-    <div id="main_container">
+    <div id="main_container" style="display:flex;flex-direction: column;top:268px;position: relative">
 <p>Paste text you like to practice with.</p>
     </div>
     <script>
@@ -70,6 +70,7 @@
                 let background_color = "#000000";
                 let text_color = "#FFFFFF";
                 let tab_text_array = ['p'];
+                let finalTranscript = "Initial load";
 
                 ////////////////////////////////////////////////////////////////////////////
                 // Variables
@@ -94,7 +95,7 @@
 
                 let SpeechRecognition;
                 let recognition;
-                let finalTranscript = '';
+                // let finalTranscript = '';
 
                 let speava_select_language;
                 const langs = [['Afrikaans', ['af-ZA']], ... /* shortened for brevity */ ['ภาษาไทย', ['th-TH']]];
@@ -392,13 +393,19 @@
                         elem.style.witdh = "300px"
                         elem.style.font.fontcolor(text_color);
                         const text = document.createTextNode('Show stats');
-                        const objBody = document.getElementsByTagName("body").item(0);
-
+                        const objBody = document.getElementById("main_container");
+                        const objBody_root = document.getElementsByTagName("body").item(0);
                         const elem_others = document.createElement('div');
+
                         elem_others.id = "all_others";
-                        elem_others.style.position = 'absolute';
+                        elem_others.style.display =  "flex";
+                        elem_others.style.flexDirection = "column";
+                        elem_others.style.scrollTop  = "0px";
+                        elem_others.style.position = "fixed";
+                        elem_others.style.width = "100%";
+                        elem_others.style.height = "256px";
                         elem_others.innerText = 'Place holder for heading';
-                        objBody.appendChild(elem_others);
+                        objBody_root.insertBefore(elem_others,objBody);
 
                         const elem_others_number = document.createElement('div');
                         elem_others_number.id = "counting_number";
@@ -519,14 +526,14 @@
                             }
                         };
 
-                        let finalTranscript = "Initial load";
+                        // let finalTranscript = "Initial load";
 
                         fixed_part_of_utterance.innerHTML = '<style="color:'
                             + text_color + ';">' + finalTranscript + '</>';
 
                         isTextAreaCreated = true;
 
-                        const objBody_buttons = document.getElementsByTagName("body").item(0);
+                        const objBody_buttons = document.getElementById("main_container");
                         buttons = document.createElement('div');
                         isShowing = true;
                         buttons.id = "buttons";
@@ -625,7 +632,15 @@
                             window.alert("clicked an irrelevant element");
                             return;
                         }
+                        const selectedElement = e.target;
                         e.target.style.outline = "solid blue 1px";
+                        const list_of_tag_elements = document.getElementsByTagName(tab_text_array[0]);
+                        for (let item of list_of_tag_elements) {
+                            if (selectedElement !== item){
+                                item.style.outline = "";
+                            }
+                        }
+
 
                         let item_count = 0;
                         for (let item of read_list_of_elements) {
@@ -707,6 +722,17 @@
                     }
                     let deltaNumberOfWords = 0;
                     const split_inPartText = inPartText.split(" ");
+
+                    const list_of_tag_elements = document.getElementsByTagName(tab_text_array[0]);
+                    for (let item of list_of_tag_elements) {
+                        if (current_node !== item){
+                            item.style.outline = "";
+                        } else {
+                            item.style.outline = "solid blue 1px";
+                        }
+                    }
+
+
                     if (inPartText == "") {
                         list_words[current_sequence_number_in_item + deltaNumberOfWords] = "<span style='color:blue'>" + list_words[current_sequence_number_in_item + deltaNumberOfWords] + "</span>";
                     } else {
@@ -716,9 +742,11 @@
                             if (base_string.indexOf(compara_string) != -1) {
                                 list_words[current_sequence_number_in_item + deltaNumberOfWords] = "<span style='opacity:50%'>" + list_words[current_sequence_number_in_item + deltaNumberOfWords] + "</span>";
                                 deltaNumberOfWords += 1;
+                                break;
                                 the_word_to_highlight = list_words[current_sequence_number_in_item + deltaNumberOfWords];
                             } else if ((base_string.replaceAll(" ", "").length) == 0) {
                                 deltaNumberOfWords += 1;
+                                break;
                             } else {
                                 list_words[current_sequence_number_in_item + deltaNumberOfWords] = "<span style='color:red'>" + list_words[current_sequence_number_in_item + deltaNumberOfWords] + "</span>";
                             }
